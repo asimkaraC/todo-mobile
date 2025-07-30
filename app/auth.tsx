@@ -1,8 +1,13 @@
 import { auth } from '@/lib/firebaseConfig';
 import styles from '@/styles/authStyles';
+import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import React from "react";
 import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
+
+export const options = {
+        headerShown: false,
+    };
 
 export default function AuthPage() {
 
@@ -14,15 +19,18 @@ export default function AuthPage() {
     // const {signIn, signUp} = useAuth();
 
     const handleLogin = async () => {
-        setError(null);
         try {
             if (signedUp) {
                 await createUserWithEmailAndPassword(auth, email, password);
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
             }
+            setError(null);
+            router.replace("/(tabs)");
         } catch (err: any) {
-            setError(err.message);
+            console.log("Authentication error:", err);
+            setPassword("");
+            setError("Invalid email or password");
         }
         // Reset fields after login
         setEmail("");
@@ -31,6 +39,8 @@ export default function AuthPage() {
 
     const switchMode = () => {
         setSignedUp(prev => !prev);
+        setError(null);
+        setPassword("");
     }
 
     return <KeyboardAvoidingView 
@@ -56,7 +66,7 @@ export default function AuthPage() {
                 onChangeText={setPassword}
             />
 
-            {error && <Text style={{color: "red"}}> {error}</Text>}
+            {error && <Text style={styles.errorMsg}> {error}</Text>}
 
             <Pressable
                 onPress={handleLogin}
@@ -69,7 +79,7 @@ export default function AuthPage() {
                 onPress={switchMode}
                 style={styles.switchModeButton}
             >
-                <Text> { signedUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up " } </Text>
+                <Text style={{ color: 'white' }}> { signedUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up " } </Text>
             </Pressable>
         </View>
     </KeyboardAvoidingView>
