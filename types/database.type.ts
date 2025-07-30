@@ -6,6 +6,7 @@ export interface Task {
     deadline: Timestamp;
     done: boolean;
     archived: boolean;
+    userId: string;
 }
 
  

@@ -15,6 +15,7 @@ export default function AuthPage() {
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [error, setError] = React.useState<string | null>("");
+    const [success, setSuccess] = React.useState<string | null>(null);
 
     // const {signIn, signUp} = useAuth();
 
@@ -22,13 +23,24 @@ export default function AuthPage() {
         try {
             if (signedUp) {
                 await createUserWithEmailAndPassword(auth, email, password);
+                setSuccess("Account created successfully!");
+                setTimeout(() => {
+                    setSuccess(null);
+                }, 3000);
+                setError(null);
+                router.replace("/auth");
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
+                setSuccess("Logged in successfully!");
+                setTimeout(() => {
+                    setSuccess(null);
+                }, 3000);
+                setError(null);
+                router.replace("/(tabs)");
             }
-            setError(null);
-            router.replace("/(tabs)");
         } catch (err: any) {
             console.log("Authentication error:", err);
+            setEmail("");
             setPassword("");
             setError("Invalid email or password");
         }
@@ -40,6 +52,7 @@ export default function AuthPage() {
     const switchMode = () => {
         setSignedUp(prev => !prev);
         setError(null);
+        setEmail("");
         setPassword("");
     }
 
@@ -67,6 +80,8 @@ export default function AuthPage() {
             />
 
             {error && <Text style={styles.errorMsg}> {error}</Text>}
+
+            {success && <Text style={styles.successMsg}> {success}</Text>}
 
             <Pressable
                 onPress={handleLogin}

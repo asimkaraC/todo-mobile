@@ -43,6 +43,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
+    successMsg: {
+        color: '#28a745',
+        marginTop: 16,
+        textAlign: 'center',
+    },
+
     button: {
         marginTop: 24,
         backgroundColor: 'cyan',
@@ -67,97 +73,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         justifyContent: 'center',
     },
-
-
-
-
-
-    safeArea: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  
-  titleRow: {
-    // flexDirection: 'row',
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  wrapper: {
-    flex: 1,
-    backgroundColor: '#000',
-    padding: 10,
-  },
-
-  
-
-  taskInput: {
-    flex: 3,
-    justifyContent: 'center',
-  },
-
-  dateInput: {
-    flex: 0.6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  iconButton: { 
-    flex: 0, 
-    height: 45,
-    aspectRatio: 0.9,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-
-  listHeader: {
-    flexDirection: 'row',
-    paddingBottom: 4,
-    marginTop: 40,
-  },
-
-  headerText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  
-  taskRow: {
-    flexDirection: 'row',
-    paddingVertical: 8,
-    borderBottomColor: '#222',
-    borderBottomWidth: 1,
-    alignItems: 'center',
-  },
-
-  taskText: {
-    flex: 3,
-    color: '#fff',
-  },
-
-  deadlineText: {
-    flex: 1,
-    color: '#ccc',
-  },
-
-  doneText: {
-    textDecorationLine: 'line-through',
-    color: '#777',
-  },
-
-  actionButton: {
-    flex: 0,
-    height: 45,
-    aspectRatio: 0.9,
-    backgroundColor: '#000', 
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
 });
 
 export default styles;

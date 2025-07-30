@@ -1,10 +1,13 @@
-import { db } from '@/lib/firebaseConfig';
+import { auth, db } from '@/lib/firebaseConfig';
 import styles from '@/styles/indexStyles';
 import { Task } from '@/types/database.type';
 import { MaterialIcons } from '@expo/vector-icons';
+import Octicons from '@expo/vector-icons/Octicons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
+import { router } from 'expo-router';
+import { signOut as firebaseSignOut } from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -49,7 +52,7 @@ export default function Index () {
 
   const loadTasks = async () => {
     try {
-      const _query = query(taskCollection, where('archived', '==', false));
+      const _query = query(taskCollection, where('archived', '==', false), where('userId', '==', auth.currentUser?.uid || ''));
       const querySnapshot = await getDocs(_query);
       const loadedTasks: Task[] = querySnapshot.docs.map(doc => ({
         id: doc.id,
@@ -97,6 +100,7 @@ export default function Index () {
         deadline: Timestamp.fromDate(date),
         done: false,
         archived: false,
+        userId: auth.currentUser?.uid || '',
       };
 
       const docRef = await addDoc(taskCollection, newTask);
@@ -240,18 +244,33 @@ export default function Index () {
     
   );
 
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      router.replace('/auth');
+    } catch (error) {
+      console.log('Sign out error:', error);
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Failed to sign out', ToastAndroid.SHORT);
+      }
+      else if (Platform.OS === 'ios') {
+        Alert.alert('Error', 'Failed to sign out');
+      }
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.wrapper}>
         
         <View style={styles.titleRow}>
           <Text style={[styles.title]}>Home</Text>
-          {/* <Pressable
-            style={styles.selectButton}
-            onPress={() => {}}
+          { <Pressable
+            style={styles.signOutButton}
+            onPress={signOut}
           > 
-            <Text style={Platform.OS === 'ios' ? [styles.iosSelectButton] : [styles.androidSelectButton]}>Select</Text>
-          </Pressable> */}
+            <Octicons name="sign-out" size={24} color="red" />
+          </Pressable> }
         </View>
 
         <View style={styles.container}>

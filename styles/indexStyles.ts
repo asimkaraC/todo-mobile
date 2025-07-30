@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   },
   
   titleRow: {
-    // flexDirection: 'row',
+    flexDirection: 'row',
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
@@ -20,6 +20,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
+  },
+
+  signOutButton: {
+    flex: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
 
   // selectButton: {
