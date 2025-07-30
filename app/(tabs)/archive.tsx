@@ -1,4 +1,4 @@
-import { db } from '@/lib/firebaseConfig';
+import { auth, db } from '@/lib/firebaseConfig';
 import styles from '@/styles/archiveStyles';
 import { Task } from '@/types/database.type';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -30,7 +30,7 @@ const Archive = () => {
 
   const loadArchivedTasks = async () => {
     try {
-      const _query = query(taskCollection, where('archived', '==', true));
+      const _query = query(taskCollection, where('archived', '==', true), where('userId', '==', auth.currentUser?.uid || ''));
       const querySnapshot = await getDocs(_query);
       const archivedTasks: Task[] = querySnapshot.docs.map(doc => ({
         id: doc.id,

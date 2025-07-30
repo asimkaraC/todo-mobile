@@ -43,11 +43,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
-    successMsg: {
-        color: '#28a745',
-        marginTop: 16,
-        textAlign: 'center',
-    },
+    // successMsg: {
+    //     color: '#2cf05aff',
+    //     marginTop: 16,
+    //     textAlign: 'center',
+    // },
 
     button: {
         marginTop: 24,

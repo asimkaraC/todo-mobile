@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import React from "react";
 import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
+import Toast from 'react-native-toast-message';
 
 export const options = {
         headerShown: false,
@@ -15,38 +16,90 @@ export default function AuthPage() {
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [error, setError] = React.useState<string | null>("");
-    const [success, setSuccess] = React.useState<string | null>(null);
-
-    // const {signIn, signUp} = useAuth();
 
     const handleLogin = async () => {
+
+        if (!email) {
+            setError("Email field can't be empty");
+            setTimeout(() => setError(null), 3000);
+            return;
+        }
+        if (!password) {
+            setError("Password field can't be empty");
+            setTimeout(() => setError(null), 3000);
+            return;
+        }
+
         try {
             if (signedUp) {
                 await createUserWithEmailAndPassword(auth, email, password);
-                setSuccess("Account created successfully!");
-                setTimeout(() => {
-                    setSuccess(null);
-                }, 3000);
                 setError(null);
+                setEmail("");
+                setPassword("");
+                Toast.show({
+                    type: 'success',
+                    text1: 'Account created successfully',
+                    position: 'bottom',
+                    visibilityTime: 2000,
+                    autoHide: true,
+                });
                 router.replace("/auth");
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
-                setSuccess("Logged in successfully!");
-                setTimeout(() => {
-                    setSuccess(null);
-                }, 3000);
                 setError(null);
+                setEmail("");
+                setPassword("");
+                Toast.show({
+                    type: 'success',
+                    text1: 'Logged in successfully',
+                    position: 'bottom',
+                    visibilityTime: 2000,
+                    autoHide: true,
+                });
                 router.replace("/(tabs)");
             }
         } catch (err: any) {
             console.log("Authentication error:", err);
-            setEmail("");
+            
+            let errorMessage = "An error occurred during authentication";
+            if (err.code) {
+                switch (err.code) {
+                    case "auth/user-not-found":
+                        errorMessage = "No account found with that email";
+                        setTimeout(() => setError(null), 3000);
+                        break;
+                    case "auth/email-already-in-use":
+                        errorMessage = "That email is already in use";
+                        setTimeout(() => setError(null), 3000);
+                        break;
+                    case "auth/weak-password":
+                        errorMessage = "Password should be at least 6 characters";
+                        setTimeout(() => setError(null), 3000);
+                        break;
+                    case "auth/missing-password":
+                        errorMessage = "Password field can't be empty";
+                        setTimeout(() => setError(null), 3000);
+                        break;
+                    case "auth/missing-email":
+                        errorMessage = "Email field can't be empty";
+                        setTimeout(() => setError(null), 3000);
+                        break;
+                    case "auth/invalid-email":
+                        errorMessage = "Invalid email";
+                        setTimeout(() => setError(null), 3000);
+                        break;                    
+                    case "auth/invalid-credential":
+                        errorMessage = "Incorrect email or password";
+                        setTimeout(() => setError(null), 3000);
+                        break;
+                    default:
+                        errorMessage = err.message || "An error occurred during authentication";
+                        setTimeout(() => setError(null), 3000);
+                }
+            }
+            setError(errorMessage);
             setPassword("");
-            setError("Invalid email or password");
         }
-        // Reset fields after login
-        setEmail("");
-        setPassword("");
     }
 
     const switchMode = () => {
@@ -64,6 +117,7 @@ export default function AuthPage() {
             <Text style={styles.title}> { signedUp ? "Create Account" : "Welcome Back" } </Text>
 
             <TextInput 
+                value={email}
                 autoCapitalize="none" 
                 keyboardType="email-address" 
                 placeholder="example@mail.com"
@@ -71,8 +125,9 @@ export default function AuthPage() {
                 onChangeText={setEmail}
             />
 
-            <TextInput  
-                autoCapitalize="none" 
+            <TextInput
+                value={password}
+                autoCapitalize="none"
                 secureTextEntry
                 placeholder="********"
                 style={styles.input}
@@ -80,8 +135,6 @@ export default function AuthPage() {
             />
 
             {error && <Text style={styles.errorMsg}> {error}</Text>}
-
-            {success && <Text style={styles.successMsg}> {success}</Text>}
 
             <Pressable
                 onPress={handleLogin}
